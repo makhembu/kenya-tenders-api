@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__plugin_context7_context7__query-docs",
+      "WebFetch(domain:www.remotion.dev)",
+      "Bash(npx create-video@latest travel-route --blank --tailwind)",
+      "Bash(rm -rf travel-route)",
+      "Bash(mkdir -p travel-route)"
+    ]
+  }
+}

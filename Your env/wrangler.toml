@@ -1,0 +1,47 @@
+name = "kenya-tenders-api"
+main = "worker.js"
+compatibility_date = "2024-12-18"
+
+[env.production]
+name = "kenya-tenders-api"
+
+[[kv_namespaces]]
+binding = "API_KEY"
+id = "a0326f059c07400fb706b2b020abe008"
+
+[[kv_namespaces]]
+binding = "RATE_LIMIT"
+id = "e029d4a04bf14c219a7f3406e72436ec"
+
+[[kv_namespaces]]
+binding = "SUBSCRIPTIONS"
+id = "a80236ca34794028a601e9a0deceeabc"
+
+[[kv_namespaces]]
+binding = "WEBHOOKS"
+id = "8ad7957417664ab9a4800d0c886626bd"
+
+[[kv_namespaces]]
+binding = "WEBHOOK_DELIVERIES"
+id = "389a8fe482eb4197b45a1fbac55e9cab"
+
+[[kv_namespaces]]
+binding = "IDEMPOTENCY"
+id = "9eb3fb22a0234ac69fd3d91b7ad00013"
+
+[[kv_namespaces]]
+binding = "TENDER_CACHE"
+id = "7b23267d4b064e858e0cddcac8a3d1fd"
+
+[[kv_namespaces]]
+binding = "CRON_STATUS"
+id = "bd9a6c36e5944020b6798faeacca68b3"
+
+[triggers]
+crons = ["0 * * * *"]
+
+[env.production.vars]
+ENVIRONMENT = "production"
+
+[vars]
+ENVIRONMENT = "development"

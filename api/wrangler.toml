@@ -1,0 +1,14 @@
+name = "bakipay-api"
+main = "src/index.js"
+compatibility_date = "2024-04-09"
+
+[[kv_namespaces]]
+binding = "BAKIPAY_KV"
+id = "31add0b2976549b9a76f5941dd912eeb"
+
+[vars]
+# Values should be set via secrets
+# API_KEY_SALT = "..."
+# WEBHOOK_SIGNING_KEY = "..."
+# SAFARICOM_API_KEY = "..."
+# SAFARICOM_API_SECRET = "..."

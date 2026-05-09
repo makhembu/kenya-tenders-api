@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kenya Tenders API - Test Dashboard</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 { color: #22d3ee; margin-bottom: 10px; }
+        h2 { color: #a5b4fc; margin: 30px 0 15px; border-bottom: 1px solid #334155; padding-bottom: 10px; }
+        .api-url { background: #1e293b; padding: 15px; border-radius: 8px; margin-bottom: 20px; font-family: monospace; word-break: break-all; }
+        .test-btn { background: #22d3ee; color: #0f172a; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: bold; margin: 5px; }
+        .test-btn:hover { background: #06b6d4; }
+        .result { background: #1e293b; padding: 15px; border-radius: 8px; margin: 10px 0; overflow-x: auto; }
+        .result pre { white-space: pre-wrap; word-wrap: break-word; font-size: 13px; }
+        .success { border-left: 4px solid #22c55e; }
+        .error { border-left: 4px solid #ef4444; }
+        .loading { border-left: 4px solid #f59e0b; }
+        .status-ok { color: #22c55e; }
+        .status-error { color: #ef4444; }
+        code { background: #334155; padding: 2px 6px; border-radius: 4px; }
+        .api-key { background: #22c55e; color: #0f172a; padding: 10px 20px; border-radius: 6px; font-weight: bold; display: inline-block; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Kenya Tenders API - Test Dashboard</h1>
+        <p>Live API testing at: <code>https://kenya-tenders-api.shelflix.workers.dev</code></p>
+        
+        <h2>1. Health Check</h2>
+        <button class="test-btn" onclick="testHealth()">Test /v1/health</button>
+        <div id="health-result"></div>
+        
+        <h2>2. Create API Key</h2>
+        <button class="test-btn" onclick="createKey()">POST /v1/keys</button>
+        <div id="key-result"></div>
+        <div id="key-display" style="display:none;">
+            <p>Your API Key:</p>
+            <div class="api-key" id="api-key-value"></div>
+        </div>
+        
+        <h2>3. Fetch Tenders</h2>
+        <button class="test-btn" onclick="fetchTenders()">GET /v1/tenders</button>
+        <button class="test-btn" onclick="fetchTendersFiltered()">Filtered (construction)</button>
+        <div id="tenders-result"></div>
+        
+        <h2>4. Get Tender Details</h2>
+        <button class="test-btn" onclick="getTenderDetails()">GET /v1/tenders/284099</button>
+        <div id="details-result"></div>
+        
+        <h2>5. Subscriptions</h2>
+        <button class="test-btn" onclick="createSubscription()">POST /v1/subscriptions</button>
+        <button class="test-btn" onclick="listSubscriptions()">GET /v1/subscriptions</button>
+        <div id="subscriptions-result"></div>
+        
+        <h2>6. Webhooks</h2>
+        <button class="test-btn" onclick="createWebhook()">POST /v1/webhooks</button>
+        <button class="test-btn" onclick="listWebhooks()">GET /v1/webhooks</button>
+        <div id="webhooks-result"></div>
+    </div>
+
+    <script>
+        const BASE_URL = 'https://kenya-tenders-api.shelflix.workers.dev';
+        const API_KEY = 'tk_test123_testsecret123';
+
+        async function showResult(id, promise, isSuccess = true) {
+            const el = document.getElementById(id);
+            el.innerHTML = '<div class="result loading"><pre>Loading...</pre></div>';
+            try {
+                const response = await promise;
+                const data = typeof response === 'string' ? response : JSON.stringify(response, null, 2);
+                el.innerHTML = `<div class="result success"><pre>${data}</pre></div>`;
+            } catch (e) {
+                el.innerHTML = `<div class="result error"><pre>Error: ${e.message}</pre></div>`;
+            }
+        }
+
+        async function testHealth() {
+            showResult('health-result', fetch(`${BASE_URL}/v1/health`).then(r => r.text()));
+        }
+
+        async function createKey() {
+            const response = await fetch(`${BASE_URL}/v1/keys`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name: 'Test Company', email: 'test@company.com' })
+            });
+            const data = await response.json();
+            document.getElementById('key-result').innerHTML = `<div class="result success"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+            if (data.data && data.data.key) {
+                document.getElementById('api-key-value').textContent = data.data.key;
+                document.getElementById('key-display').style.display = 'block';
+            }
+        }
+
+        async function fetchTenders() {
+            showResult('tenders-result', 
+                fetch(`${BASE_URL}/v1/tenders?perpage=3`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                }).then(r => r.text())
+            );
+        }
+
+        async function fetchTendersFiltered() {
+            showResult('tenders-result', 
+                fetch(`${BASE_URL}/v1/tenders?keyword=construction&perpage=5`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                }).then(r => r.text())
+            );
+        }
+
+        async function getTenderDetails() {
+            showResult('details-result', 
+                fetch(`${BASE_URL}/v1/tenders/284099`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                }).then(r => r.text())
+            );
+        }
+
+        async function createSubscription() {
+            const response = await fetch(`${BASE_URL}/v1/subscriptions`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify({
+                    keywords: ['construction', 'building'],
+                    counties: ['Nairobi'],
+                    categories: ['Goods', 'Works']
+                })
+            });
+            const data = await response.json();
+            document.getElementById('subscriptions-result').innerHTML = `<div class="result success"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+        }
+
+        async function listSubscriptions() {
+            showResult('subscriptions-result',
+                fetch(`${BASE_URL}/v1/subscriptions`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                }).then(r => r.text())
+            );
+        }
+
+        async function createWebhook() {
+            const response = await fetch(`${BASE_URL}/v1/webhooks`, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${API_KEY}`
+                },
+                body: JSON.stringify({
+                    webhook_url: 'https://example.com/webhook',
+                    events: ['tender.new', 'tender.amended']
+                })
+            });
+            const data = await response.json();
+            document.getElementById('webhooks-result').innerHTML = `<div class="result success"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+        }
+
+        async function listWebhooks() {
+            showResult('webhooks-result',
+                fetch(`${BASE_URL}/v1/webhooks`, {
+                    headers: { 'Authorization': `Bearer ${API_KEY}` }
+                }).then(r => r.text())
+            );
+        }
+    </script>
+</body>
+</html>

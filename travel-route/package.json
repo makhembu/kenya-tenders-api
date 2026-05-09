@@ -1,0 +1,27 @@
+{
+  "name": "travel-route",
+  "version": "1.0.0",
+  "description": "Travel route animation with 3D landmarks",
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion render",
+    "upgrade": "remotion upgrade",
+    "test": "eslint src --ext ts,tsx,js,jsx && tsc"
+  },
+  "dependencies": {
+    "@remotion/cli": "^4.0.0",
+    "@turf/turf": "^7.0.0",
+    "mapbox-gl": "^3.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "remotion": "^4.0.0"
+  },
+  "devDependencies": {
+    "@remotion/eslint-config": "^4.0.0",
+    "@types/react": "^18.2.0",
+    "@types/mapbox-gl": "^3.0.0",
+    "eslint": "^8.43.0",
+    "prettier": "^2.8.8",
+    "typescript": "^5.1.3"
+  }
+}
